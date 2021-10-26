@@ -32,7 +32,7 @@ class FormFactorDelegate {
 /// Builds a widget based on the most specific platform builder provided.
 /// Ex.
 /// If running on Android with [PlatformBuilder.androidBuilder], [PlatformBuilder.builder],
-/// and [PlatformBuilder.nativeBuilder] builders provided, the builder order is as follows:
+/// and [PlatformBuilder.nativeBuilder] builders provided, the builder precedence order is as follows:
 /// - [PlatformBuilder.androidBuilder],
 /// - [PlatformBuilder.nativeBuilder]
 /// - [PlatformBuilder.builder]

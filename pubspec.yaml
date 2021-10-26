@@ -1,7 +1,7 @@
 name: platform_builder
-description: A new Flutter package project.
-version: 0.0.1
-homepage:
+description: A Flutter library for performing platform checks and building widgets based on platform.
+version: 1.0.0
+homepage: https://github.com/danReynolds/platform_builder
 
 environment:
   sdk: ">=2.15.0-227.0.dev <3.0.0"

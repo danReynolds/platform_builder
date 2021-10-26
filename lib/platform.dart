@@ -18,6 +18,8 @@ enum Platforms {
   windows
 }
 
+/// A platform utility class that provides helpers for determining the current platform,
+/// host platform, renderer and other platform checks.
 class Platform {
   static Platform get instance {
     _instance ??= Platform._(
@@ -29,14 +31,15 @@ class Platform {
   static Platform? _instance;
 
   Platform._({
-    this.desktopBreakpoint,
+    this.desktopBreakpoint = defaultDesktopFormFactorBreakpoint,
     this.navigatorKey,
     required this.supportedPlatforms,
   });
 
-  final int? desktopBreakpoint;
+  final int desktopBreakpoint;
   final GlobalKey<NavigatorState>? navigatorKey;
   final List<Platforms> supportedPlatforms;
+  bool isTestOverride = false;
 
   static init({
     int? desktopBreakpoint,
@@ -44,7 +47,8 @@ class Platform {
     List<Platforms>? supportedPlatforms,
   }) {
     _instance = Platform._(
-      desktopBreakpoint: desktopBreakpoint,
+      desktopBreakpoint:
+          desktopBreakpoint ?? defaultDesktopFormFactorBreakpoint,
       navigatorKey: navigatorKey,
       supportedPlatforms: supportedPlatforms ?? Platforms.values,
     );
@@ -67,7 +71,7 @@ class Platform {
   }
 
   bool get isFormFactorEnabled {
-    if (_isTest) {
+    if (isTestOverride) {
       return true;
     }
 
@@ -123,26 +127,32 @@ class Platform {
 
   // Form factor checks
 
+  /// Whether the current screen width determined by a [MediaQuery] check against
+  /// the [NavigatorState.currentContext] supplied as the [Platform.navigatorKey].
+  /// Returns true if the width is greater than or equal to the [Platform.desktopBreakpoint].
   bool get isDesktop {
-    if (_isTest) {
+    if (isTestOverride) {
       return true;
     }
 
-    return _screenWidth >= defaultDesktopFormFactorBreakpoint;
+    return _screenWidth >= desktopBreakpoint;
   }
 
+  /// Whether the current screen width determined by a [MediaQuery] check against
+  /// the [NavigatorState.currentContext] supplied as the [Platform.navigatorKey].
+  /// Returns true if the width is less than the [Platform.desktopBreakpoint].
   bool get isMobile {
-    if (_isTest) {
+    if (isTestOverride) {
       return false;
     }
 
-    return _screenWidth < defaultDesktopFormFactorBreakpoint;
+    return _screenWidth < desktopBreakpoint;
   }
 
   // Current platform checks
 
   Platforms get current {
-    if (_isTest) {
+    if (isTestOverride) {
       return Platforms.android;
     }
 
@@ -205,11 +215,5 @@ class Platform {
 
   bool get isHtml {
     return PlatformJS.instance.renderer == FlutterRenderer.html;
-  }
-
-  // Test environment check
-
-  bool get _isTest {
-    return io.Platform.environment.containsKey('FLUTTER_TEST');
   }
 }
