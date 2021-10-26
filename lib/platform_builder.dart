@@ -3,6 +3,8 @@ library platform_builder;
 import 'package:flutter/material.dart';
 import 'package:platform_builder/platform.dart';
 
+export 'package:platform_builder/platform.dart';
+
 class FormFactorDelegate {
   final Widget Function(BuildContext context)? builder;
   final Widget Function(BuildContext context)? nativeBuilder;
