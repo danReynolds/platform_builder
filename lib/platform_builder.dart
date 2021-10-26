@@ -4,7 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:platform_builder/platform.dart';
 
 export 'package:platform_builder/platform.dart';
+export 'package:platform_builder/form_factor_builder.dart';
 
+/// Contains all platform builder functions that are available to a given
+/// form factor.
 class FormFactorDelegate {
   final Widget Function(BuildContext context)? builder;
   final Widget Function(BuildContext context)? nativeBuilder;
@@ -71,14 +74,17 @@ class PlatformBuilder extends StatelessWidget {
   /// Builder for the fuschia platform.
   final Widget Function(BuildContext context)? fuschiaBuilder;
 
+  /// Delegate for declaring platform builders for the mobile form factor.
   final FormFactorDelegate? mobile;
+
+  /// Delegate for declaring platform builders for the desktop form factor.
   final FormFactorDelegate? desktop;
 
   /// A list of supported platforms this widget should check are covered by the provided builders.
-  /// Defaults to the supported platform list specified to [PlatformService].
+  /// Defaults to the supported platform list specified to [Platform].
   final List<Platforms>? supportedPlatforms;
 
-  FormFactorDelegate? get formFactorDelegate {
+  FormFactorDelegate? get _formFactorDelegate {
     if (!Platform.instance.isFormFactorEnabled) {
       return null;
     }
@@ -87,51 +93,51 @@ class PlatformBuilder extends StatelessWidget {
   }
 
   Widget Function(BuildContext context)? get _androidBuilder {
-    return formFactorDelegate?.androidBuilder ??
+    return _formFactorDelegate?.androidBuilder ??
         androidBuilder ??
         _nativeBuilder;
   }
 
   Widget Function(BuildContext context)? get _iOSBuilder {
-    return formFactorDelegate?.iOSBuilder ?? iOSBuilder ?? _nativeBuilder;
+    return _formFactorDelegate?.iOSBuilder ?? iOSBuilder ?? _nativeBuilder;
   }
 
   Widget Function(BuildContext context)? get _chromeExtensionBuilder {
-    return formFactorDelegate?.chromeExtensionBuilder ??
+    return _formFactorDelegate?.chromeExtensionBuilder ??
         chromeExtensionBuilder ??
         _webBuilder;
   }
 
   Widget Function(BuildContext context)? get _macOSBuilder {
-    return formFactorDelegate?.macOSBuilder ?? macOSBuilder ?? _nativeBuilder;
+    return _formFactorDelegate?.macOSBuilder ?? macOSBuilder ?? _nativeBuilder;
   }
 
   Widget Function(BuildContext context)? get _linuxBuilder {
-    return formFactorDelegate?.linuxBuilder ?? linuxBuilder ?? _nativeBuilder;
+    return _formFactorDelegate?.linuxBuilder ?? linuxBuilder ?? _nativeBuilder;
   }
 
   Widget Function(BuildContext context)? get _fuschiaBuilder {
-    return formFactorDelegate?.fuschiaBuilder ??
+    return _formFactorDelegate?.fuschiaBuilder ??
         fuschiaBuilder ??
         _nativeBuilder;
   }
 
   Widget Function(BuildContext context)? get _windowsBuilder {
-    return formFactorDelegate?.windowsBuilder ??
+    return _formFactorDelegate?.windowsBuilder ??
         windowsBuilder ??
         _nativeBuilder;
   }
 
   Widget Function(BuildContext context)? get _nativeBuilder {
-    return formFactorDelegate?.nativeBuilder ?? nativeBuilder ?? _builder;
+    return _formFactorDelegate?.nativeBuilder ?? nativeBuilder ?? _builder;
   }
 
   Widget Function(BuildContext context)? get _webBuilder {
-    return formFactorDelegate?.webBuilder ?? webBuilder ?? _builder;
+    return _formFactorDelegate?.webBuilder ?? webBuilder ?? _builder;
   }
 
   Widget Function(BuildContext context)? get _builder {
-    return formFactorDelegate?.builder ?? builder;
+    return _formFactorDelegate?.builder ?? builder;
   }
 
   const PlatformBuilder({

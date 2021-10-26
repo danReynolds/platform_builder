@@ -57,14 +57,14 @@ class Platform {
   double get _screenWidth {
     final _navigatorKey = navigatorKey;
 
-    if (_navigatorKey == null) {
-      throw 'uninitialized navigatorKey.';
+    if (!isFormFactorEnabled) {
+      throw 'Form factor checks not enabled. Provide a `navigatorKey` to `Platform.init`.';
     }
 
-    final context = _navigatorKey.currentContext;
+    final context = _navigatorKey!.currentContext;
 
     if (context == null) {
-      throw 'no BuildContext for navigatorKey';
+      throw 'No `BuildContext` for `navigatorKey`. Make sure to pass the `navigatorKey` to `MaterialApp`.';
     }
 
     return MediaQuery.of(context).size.width;
@@ -128,8 +128,8 @@ class Platform {
   // Form factor checks
 
   /// Whether the current screen width determined by a [MediaQuery] check against
-  /// the [NavigatorState.currentContext] supplied as the [Platform.navigatorKey].
-  /// Returns true if the width is greater than or equal to the [Platform.desktopBreakpoint].
+  /// the [NavigatorState.currentContext] supplied as the [Platform.navigatorKey]
+  /// is greater than or equal to the [Platform.desktopBreakpoint].
   bool get isDesktop {
     if (isTestOverride) {
       return true;
@@ -140,7 +140,7 @@ class Platform {
 
   /// Whether the current screen width determined by a [MediaQuery] check against
   /// the [NavigatorState.currentContext] supplied as the [Platform.navigatorKey].
-  /// Returns true if the width is less than the [Platform.desktopBreakpoint].
+  /// is less than the [Platform.desktopBreakpoint].
   bool get isMobile {
     if (isTestOverride) {
       return false;
@@ -151,6 +151,7 @@ class Platform {
 
   // Current platform checks
 
+  /// The current platform the Flutter application us running on.
   Platforms get current {
     if (isTestOverride) {
       return Platforms.android;
@@ -187,9 +188,8 @@ class Platform {
     throw 'unsupported platform';
   }
 
-  /// The host platform that the application is running on. For example if running
-  /// the web framework an iPhone, the host would be iOS. If running the Android
-  /// framework, the host would be Android.
+  /// The application's host operating system. In the example of running Flutter web
+  /// on an iPhone, the host would be iOS.
   Platforms get currentHost {
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:

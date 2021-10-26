@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:golden_toolkit/golden_toolkit.dart';
-import 'package:platform_builder/platform.dart';
 import 'package:platform_builder/platform_builder.dart';
 
 final greenTestWidget = Container(
