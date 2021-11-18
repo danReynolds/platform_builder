@@ -189,7 +189,7 @@ In this example on a web platform, all three builders are applicable, but the pr
 ## FAQs
 
 * **Q**: Don't we already have a way to check the current Platform?
-* **A** Yes! But the [Platform](https://api.flutter.dev/flutter/dart-io/Platform-class.html) library from `dart:io` has some quirks like the fact that calling native platforms like `Platform.instance.isIOS` on web throws an exception. In this lib we add guards for that as well expanding the platform helpers to include other helpful platform utilities like the following:
+* **A** Yes! But the [Platform](https://api.flutter.dev/flutter/dart-io/Platform-class.html) library from `dart:io` has some quirks like the fact that calling native platforms like `Platform.isIOS` on web throws an exception and that there is no check for web. We address both those issues here as well expanding the platform helpers to include other helpful platform utilities like the following:
 
   - [Platform.instance.current](https://pub.dev/documentation/platform_builder/latest/platform/Platform/current.html): The current Flutter application platform.
   - [Platform.instance.currentHost](https://pub.dev/documentation/platform_builder/latest/platform/Platform/currentHost.html): The application's host operating system.
