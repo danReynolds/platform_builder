@@ -1,6 +1,7 @@
 import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:platform_builder/form_factor_bloc.dart';
 import 'js/base_js.dart';
 import 'js/js.dart';
 
@@ -30,52 +31,32 @@ class Platform {
 
   static Platform? _instance;
 
-  Platform._({
-    this.desktopBreakpoint = defaultDesktopFormFactorBreakpoint,
-    this.navigatorKey,
-    required this.supportedPlatforms,
-  });
+  FormFactors? get formFactor {
+    return FormFactorBloc.instance.value;
+  }
 
-  final int desktopBreakpoint;
+  Platform._({
+    required this.supportedPlatforms,
+    this.navigatorKey,
+    FormFactorBreakpoints? breakpoints,
+  }) {
+    FormFactorBloc.instance.init(breakpoints);
+  }
+
   final GlobalKey<NavigatorState>? navigatorKey;
   final List<Platforms> supportedPlatforms;
   bool isTestOverride = false;
 
   static init({
-    int? desktopBreakpoint,
+    FormFactorBreakpoints? breakpoints,
     GlobalKey<NavigatorState>? navigatorKey,
     List<Platforms>? supportedPlatforms,
   }) {
     _instance = Platform._(
-      desktopBreakpoint:
-          desktopBreakpoint ?? defaultDesktopFormFactorBreakpoint,
+      breakpoints: breakpoints,
       navigatorKey: navigatorKey,
       supportedPlatforms: supportedPlatforms ?? Platforms.values,
     );
-  }
-
-  double get _screenWidth {
-    final _navigatorKey = navigatorKey;
-
-    if (!isFormFactorEnabled) {
-      throw 'Form factor checks not enabled. Provide a `navigatorKey` to `Platform.init`.';
-    }
-
-    final context = _navigatorKey!.currentContext;
-
-    if (context == null) {
-      throw 'No `BuildContext` for `navigatorKey`. Make sure to pass the `navigatorKey` to `MaterialApp`.';
-    }
-
-    return MediaQuery.of(context).size.width;
-  }
-
-  bool get isFormFactorEnabled {
-    if (isTestOverride) {
-      return true;
-    }
-
-    return navigatorKey != null;
   }
 
   // Platform checks
@@ -127,26 +108,28 @@ class Platform {
 
   // Form factor checks
 
-  /// Whether the current screen width determined by a [MediaQuery] check against
-  /// the [NavigatorState.currentContext] supplied as the [Platform.navigatorKey]
-  /// is greater than or equal to the [Platform.desktopBreakpoint].
-  bool get isDesktop {
-    if (isTestOverride) {
-      return true;
-    }
-
-    return _screenWidth >= desktopBreakpoint;
-  }
-
-  /// Whether the current screen width determined by a [MediaQuery] check against
-  /// the [NavigatorState.currentContext] supplied as the [Platform.navigatorKey].
-  /// is less than the [Platform.desktopBreakpoint].
   bool get isMobile {
     if (isTestOverride) {
       return false;
     }
 
-    return _screenWidth < desktopBreakpoint;
+    return FormFactorBloc.instance.value == FormFactors.desktop;
+  }
+
+  bool get isTablet {
+    if (isTestOverride) {
+      return true;
+    }
+
+    return FormFactorBloc.instance.value == FormFactors.tablet;
+  }
+
+  bool get isDesktop {
+    if (isTestOverride) {
+      return true;
+    }
+
+    return FormFactorBloc.instance.value == FormFactors.desktop;
   }
 
   // Current platform checks

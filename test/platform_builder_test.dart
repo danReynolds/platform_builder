@@ -114,7 +114,9 @@ void main() {
     Platform.init(
       supportedPlatforms: [Platforms.android],
       // The default test environment size is 800x600
-      desktopBreakpoint: 400,
+      breakpoints: FormFactorBreakpoints(
+        tablet: 400,
+      ),
       navigatorKey: key,
     );
 
@@ -141,7 +143,9 @@ void main() {
     Platform.init(
       supportedPlatforms: [Platforms.android],
       // The default test environment size is 800x600
-      desktopBreakpoint: 1000,
+      breakpoints: FormFactorBreakpoints(
+        tablet: 1000,
+      ),
       navigatorKey: key,
     );
 

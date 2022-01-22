@@ -1,10 +1,13 @@
 library platform_builder;
 
 import 'package:flutter/material.dart';
+import 'package:platform_builder/form_factor_bloc.dart';
 import 'package:platform_builder/platform.dart';
 
 export 'package:platform_builder/platform.dart';
 export 'package:platform_builder/form_factor_builder.dart';
+export 'package:platform_builder/form_factor_bloc.dart'
+    show FormFactors, FormFactorBreakpoints;
 
 /// Contains all platform builder functions that are available to a given
 /// form factor.
@@ -77,6 +80,9 @@ class PlatformBuilder extends StatelessWidget {
   /// Delegate for declaring platform builders for the mobile form factor.
   final FormFactorDelegate? mobile;
 
+  /// Delegate for declaring platform builders for the tablet form factor.
+  final FormFactorDelegate? tablet;
+
   /// Delegate for declaring platform builders for the desktop form factor.
   final FormFactorDelegate? desktop;
 
@@ -85,11 +91,16 @@ class PlatformBuilder extends StatelessWidget {
   final List<Platforms>? supportedPlatforms;
 
   FormFactorDelegate? get _formFactorDelegate {
-    if (!Platform.instance.isFormFactorEnabled) {
-      return null;
+    switch (FormFactorBloc.instance.value) {
+      case FormFactors.mobile:
+        return mobile;
+      case FormFactors.tablet:
+        return tablet;
+      case FormFactors.desktop:
+        return desktop;
+      default:
+        return null;
     }
-
-    return Platform.instance.isDesktop ? desktop : mobile;
   }
 
   Widget Function(BuildContext context)? get _androidBuilder {
@@ -153,67 +164,75 @@ class PlatformBuilder extends StatelessWidget {
     this.macOSBuilder,
     this.fuschiaBuilder,
     this.mobile,
+    this.tablet,
     this.desktop,
     key,
   }) : super(key: key);
 
   @override
   build(context) {
-    final platform = Platform.instance.current;
-    final _supportedPlatforms =
-        supportedPlatforms ?? Platform.instance.supportedPlatforms;
+    return StreamBuilder(
+      stream: FormFactorBloc.instance.stream,
+      builder: (context, formFactorSnap) {
+        final platform = Platform.instance.current;
+        final _supportedPlatforms =
+            supportedPlatforms ?? Platform.instance.supportedPlatforms;
 
-    // Check that the implementation does not omit any supported platforms
-    assert(
-      !_supportedPlatforms.contains(Platforms.android) ||
-          _androidBuilder != null,
-      'Missing android platform builder',
-    );
-    assert(
-      !_supportedPlatforms.contains(Platforms.iOS) || _iOSBuilder != null,
-      'Missing iOS platform builder',
-    );
-    assert(
-      !_supportedPlatforms.contains(Platforms.linux) || _linuxBuilder != null,
-      'Missing linux platform builder',
-    );
-    assert(
-      !_supportedPlatforms.contains(Platforms.fuschia) ||
-          _fuschiaBuilder != null,
-      'Missing fuschia platform builder',
-    );
-    assert(
-      !_supportedPlatforms.contains(Platforms.macOS) || _macOSBuilder != null,
-      'Missing macOS platform builder',
-    );
-    assert(
-      !_supportedPlatforms.contains(Platforms.windows) ||
-          _windowsBuilder != null,
-      'Missing windows platform builder',
-    );
-    assert(
-      !_supportedPlatforms.contains(Platforms.chromeExtension) ||
-          _chromeExtensionBuilder != null,
-      'Missing chrome extension platform builder',
-    );
+        // Check that the implementation does not omit any supported platforms
+        assert(
+          !_supportedPlatforms.contains(Platforms.android) ||
+              _androidBuilder != null,
+          'Missing android platform builder',
+        );
+        assert(
+          !_supportedPlatforms.contains(Platforms.iOS) || _iOSBuilder != null,
+          'Missing iOS platform builder',
+        );
+        assert(
+          !_supportedPlatforms.contains(Platforms.linux) ||
+              _linuxBuilder != null,
+          'Missing linux platform builder',
+        );
+        assert(
+          !_supportedPlatforms.contains(Platforms.fuschia) ||
+              _fuschiaBuilder != null,
+          'Missing fuschia platform builder',
+        );
+        assert(
+          !_supportedPlatforms.contains(Platforms.macOS) ||
+              _macOSBuilder != null,
+          'Missing macOS platform builder',
+        );
+        assert(
+          !_supportedPlatforms.contains(Platforms.windows) ||
+              _windowsBuilder != null,
+          'Missing windows platform builder',
+        );
+        assert(
+          !_supportedPlatforms.contains(Platforms.chromeExtension) ||
+              _chromeExtensionBuilder != null,
+          'Missing chrome extension platform builder',
+        );
 
-    switch (platform) {
-      case Platforms.android:
-        return _androidBuilder!(context);
-      case Platforms.iOS:
-        return _iOSBuilder!(context);
-      case Platforms.windows:
-        return _windowsBuilder!(context);
-      case Platforms.fuschia:
-        return _fuschiaBuilder!(context);
-      case Platforms.macOS:
-        return _macOSBuilder!(context);
-      case Platforms.chromeExtension:
-        return _chromeExtensionBuilder!(context);
-      case Platforms.linux:
-        return _linuxBuilder!(context);
-      case Platforms.web:
-        return _webBuilder!(context);
-    }
+        switch (platform) {
+          case Platforms.android:
+            return _androidBuilder!(context);
+          case Platforms.iOS:
+            return _iOSBuilder!(context);
+          case Platforms.windows:
+            return _windowsBuilder!(context);
+          case Platforms.fuschia:
+            return _fuschiaBuilder!(context);
+          case Platforms.macOS:
+            return _macOSBuilder!(context);
+          case Platforms.chromeExtension:
+            return _chromeExtensionBuilder!(context);
+          case Platforms.linux:
+            return _linuxBuilder!(context);
+          case Platforms.web:
+            return _webBuilder!(context);
+        }
+      },
+    );
   }
 }

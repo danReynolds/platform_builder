@@ -3,10 +3,12 @@ import 'package:platform_builder/platform_builder.dart';
 
 class FormFactorBuilder extends StatelessWidget {
   final Widget Function(BuildContext context) mobileBuilder;
+  final Widget Function(BuildContext context) tabletBuilder;
   final Widget Function(BuildContext context) desktopBuilder;
 
   const FormFactorBuilder({
     required this.mobileBuilder,
+    required this.tabletBuilder,
     required this.desktopBuilder,
     key,
   }) : super(key: key);
@@ -16,6 +18,9 @@ class FormFactorBuilder extends StatelessWidget {
     return PlatformBuilder(
       mobile: FormFactorDelegate(
         builder: mobileBuilder,
+      ),
+      tablet: FormFactorDelegate(
+        builder: tabletBuilder,
       ),
       desktop: FormFactorDelegate(
         builder: desktopBuilder,
