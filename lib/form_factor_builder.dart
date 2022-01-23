@@ -1,30 +1,70 @@
 import 'package:flutter/material.dart';
-import 'package:platform_builder/platform_builder.dart';
+import 'package:platform_builder/form_factor.dart';
 
-class FormFactorBuilder extends StatelessWidget {
-  final Widget Function(BuildContext context) mobileBuilder;
-  final Widget Function(BuildContext context) tabletBuilder;
-  final Widget Function(BuildContext context) desktopBuilder;
+typedef Builder = Widget Function(BuildContext context);
+
+class FormFactorBuilder extends StatefulWidget {
+  final Builder? builder;
+  final Builder? mobileBuilder;
+  final Builder? tabletBuilder;
+  final Builder? desktopBuilder;
 
   const FormFactorBuilder({
-    required this.mobileBuilder,
-    required this.tabletBuilder,
-    required this.desktopBuilder,
+    this.mobileBuilder,
+    this.tabletBuilder,
+    this.desktopBuilder,
+    this.builder,
     key,
   }) : super(key: key);
 
   @override
+  _FormFactorBuilderState createState() => _FormFactorBuilderState();
+}
+
+class _FormFactorBuilderState extends State<FormFactorBuilder> {
+  Builder? get _desktopBuilder {
+    return widget.desktopBuilder ?? widget.builder;
+  }
+
+  Builder? get _tabletBuilder {
+    return widget.tabletBuilder ?? widget.builder;
+  }
+
+  Builder? get _mobileBuilder {
+    return widget.mobileBuilder ?? widget.builder;
+  }
+
+  @override
   build(context) {
-    return PlatformBuilder(
-      mobile: FormFactorDelegate(
-        builder: mobileBuilder,
-      ),
-      tablet: FormFactorDelegate(
-        builder: tabletBuilder,
-      ),
-      desktop: FormFactorDelegate(
-        builder: desktopBuilder,
-      ),
+    return StreamBuilder<FormFactors?>(
+      stream: FormFactor.instance.stream,
+      builder: (context, formFactorSnap) {
+        if (!formFactorSnap.hasData) {
+          return Container();
+        }
+
+        final formFactor = formFactorSnap.data!;
+        final breakpoints = FormFactor.instance.breakpoints;
+
+        assert(_mobileBuilder != null, 'Missing mobile builder');
+        assert(
+          breakpoints.tablet == null || _tabletBuilder != null,
+          'Missing tablet builder',
+        );
+        assert(
+          breakpoints.desktop == null || _desktopBuilder != null,
+          'Missing desktop builder',
+        );
+
+        switch (formFactor) {
+          case FormFactors.mobile:
+            return _mobileBuilder!(context);
+          case FormFactors.tablet:
+            return _tabletBuilder!(context);
+          case FormFactors.desktop:
+            return _desktopBuilder!(context);
+        }
+      },
     );
   }
 }

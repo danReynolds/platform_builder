@@ -1,7 +1,6 @@
 import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:platform_builder/form_factor_bloc.dart';
 import 'js/base_js.dart';
 import 'js/js.dart';
 
@@ -31,30 +30,17 @@ class Platform {
 
   static Platform? _instance;
 
-  FormFactors? get formFactor {
-    return FormFactorBloc.instance.value;
-  }
-
   Platform._({
     required this.supportedPlatforms,
-    this.navigatorKey,
-    FormFactorBreakpoints? breakpoints,
-  }) {
-    FormFactorBloc.instance.init(breakpoints);
-  }
+  });
 
-  final GlobalKey<NavigatorState>? navigatorKey;
   final List<Platforms> supportedPlatforms;
   bool isTestOverride = false;
 
   static init({
-    FormFactorBreakpoints? breakpoints,
-    GlobalKey<NavigatorState>? navigatorKey,
     List<Platforms>? supportedPlatforms,
   }) {
     _instance = Platform._(
-      breakpoints: breakpoints,
-      navigatorKey: navigatorKey,
       supportedPlatforms: supportedPlatforms ?? Platforms.values,
     );
   }
@@ -104,32 +90,6 @@ class Platform {
 
   bool get isWindows {
     return io.Platform.isWindows;
-  }
-
-  // Form factor checks
-
-  bool get isMobile {
-    if (isTestOverride) {
-      return false;
-    }
-
-    return FormFactorBloc.instance.value == FormFactors.desktop;
-  }
-
-  bool get isTablet {
-    if (isTestOverride) {
-      return true;
-    }
-
-    return FormFactorBloc.instance.value == FormFactors.tablet;
-  }
-
-  bool get isDesktop {
-    if (isTestOverride) {
-      return true;
-    }
-
-    return FormFactorBloc.instance.value == FormFactors.desktop;
   }
 
   // Current platform checks
