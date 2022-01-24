@@ -1,11 +1,9 @@
 import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'js/base_js.dart';
 import 'js/js.dart';
 
 const _chromeExtensionScheme = 'chrome-extension';
-const defaultDesktopFormFactorBreakpoint = 760;
 
 enum Platforms {
   android,
@@ -35,7 +33,6 @@ class Platform {
   });
 
   final List<Platforms> supportedPlatforms;
-  bool isTestOverride = false;
 
   static init({
     List<Platforms>? supportedPlatforms,
@@ -96,10 +93,6 @@ class Platform {
 
   /// The current platform the Flutter application us running on.
   Platforms get current {
-    if (isTestOverride) {
-      return Platforms.android;
-    }
-
     if (isChromeExtension) {
       return Platforms.chromeExtension;
     }

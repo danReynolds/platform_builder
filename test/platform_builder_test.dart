@@ -21,9 +21,8 @@ void main() {
   ErrorWidget.builder = (FlutterErrorDetails details) => Container();
 
   Platform.init(
-    supportedPlatforms: [Platforms.android],
+    supportedPlatforms: [Platforms.macOS],
   );
-  Platform.instance.isTestOverride = true;
 
   testGoldens(
     'Basic builder',
@@ -41,26 +40,9 @@ void main() {
     'Basic platform specific builder',
     (WidgetTester tester) async {
       await tester.pumpWidget(PlatformBuilder(
-        androidBuilder: (context) => greenTestWidget,
+        macOSBuilder: (context) => greenTestWidget,
       ));
       await screenMatchesGolden(tester, 'basic_platform_specific_test',
-          customPump: (widget) {
-        return widget.pump(Duration.zero);
-      });
-    },
-  );
-
-  testGoldens(
-    'Basic form factor specific builder',
-    (WidgetTester tester) async {
-      await tester.pumpWidget(
-        PlatformBuilder(
-          desktop: FormFactorDelegate(
-            androidBuilder: (context) => greenTestWidget,
-          ),
-        ),
-      );
-      await screenMatchesGolden(tester, 'basic_form_factor_specific_test',
           customPump: (widget) {
         return widget.pump(Duration.zero);
       });
@@ -72,15 +54,8 @@ void main() {
     (WidgetTester tester) async {
       await tester.pumpWidget(
         PlatformBuilder(
-          androidBuilder: (context) => redTestWidget,
-          desktop: FormFactorDelegate(
-            builder: (context) => redTestWidget,
-            nativeBuilder: (context) => redTestWidget,
-            androidBuilder: (context) => greenTestWidget,
-          ),
-          mobile: FormFactorDelegate(
-            androidBuilder: (context) => redTestWidget,
-          ),
+          macOSBuilder: (context) => greenTestWidget,
+          nativeBuilder: (context) => redTestWidget,
         ),
       );
       await screenMatchesGolden(tester, 'builder_specificity_test',
@@ -94,7 +69,7 @@ void main() {
     'Assertion thrown with missing builders',
     (WidgetTester tester) async {
       Platform.init(
-        supportedPlatforms: [Platforms.android, Platforms.iOS],
+        supportedPlatforms: [Platforms.macOS, Platforms.iOS],
       );
 
       await tester.pumpWidget(PlatformBuilder(
@@ -107,64 +82,4 @@ void main() {
       );
     },
   );
-
-  testGoldens('desktop builder', (WidgetTester tester) async {
-    final key = GlobalKey<NavigatorState>();
-
-    Platform.init(
-      supportedPlatforms: [Platforms.android],
-      // The default test environment size is 800x600
-      breakpoints: FormFactorBreakpoints(
-        tablet: 400,
-      ),
-      navigatorKey: key,
-    );
-
-    await tester.pumpWidget(
-      MaterialApp(
-        navigatorKey: key,
-        home: PlatformBuilder(
-          desktop: FormFactorDelegate(
-            builder: (context) => greenTestWidget,
-          ),
-        ),
-      ),
-    );
-
-    await screenMatchesGolden(tester, 'desktop_builder_test',
-        customPump: (widget) {
-      return widget.pump(Duration.zero);
-    });
-  });
-
-  testGoldens('mobile builder', (WidgetTester tester) async {
-    final key = GlobalKey<NavigatorState>();
-
-    Platform.init(
-      supportedPlatforms: [Platforms.android],
-      // The default test environment size is 800x600
-      breakpoints: FormFactorBreakpoints(
-        tablet: 1000,
-      ),
-      navigatorKey: key,
-    );
-
-    await tester.pumpWidget(
-      MaterialApp(
-        navigatorKey: key,
-        home: PlatformBuilder(
-          mobile: FormFactorDelegate(
-            builder: (context) => greenTestWidget,
-          ),
-        ),
-      ),
-    );
-
-    await screenMatchesGolden(tester, 'mobile_builder_test',
-        customPump: (widget) {
-      return widget.pump(Duration.zero);
-    });
-  });
-
-  // Add tests for making sure that it throws errors if supported platforms are left unspecified
 }
