@@ -1,6 +1,6 @@
 # Platform Builder
 
-A Flutter library for performing platform checks and building widgets based on platform and form factor.
+A Flutter library for performing platform checks and building widgets based on platform.
 
 ## Platform checks
 
@@ -43,9 +43,7 @@ The libray provides builders for the following platforms:
 * web
 * chrome extension
 
-By default all platforms are enabled and the `PlatformBuilder` will throw an error if you forget to include an implementation for one of the supported platforms. To specify
-your preferred platforms, call the [Platform.init](https://pub.dev/documentation/platform_builder/latest/platform/Platform/init.html) to initialize the `Platform` singleton
-with the list of your application's supported platforms:
+By default all platforms are enabled and the `PlatformBuilder` will throw an error if you forget to include an implementation for one of the supported platforms. To specify your preferred platforms, call the [Platform.init](https://pub.dev/documentation/platform_builder/latest/platform/Platform/init.html) to initialize the `Platform` singleton with the list of your application's supported platforms:
 
 ```dart
 import 'package:platform_builder/platform_builder.dart';
@@ -59,7 +57,7 @@ Platform.init(
 );
 ```
 
-If a particular `PlatformBuilder` needs to override the global supported platforms, such as during active development, you can pass an override to the widget:
+If a particular `PlatformBuilder` needs to override the global list of supported platforms, such as during active development, you can pass an override to the widget:
 
 ```dart
 import 'package:platform_builder/platform_builder.dart';
@@ -71,89 +69,6 @@ class MyWidget extends StatelessWidget {
       supportedPlatforms: [Platforms.iOS, Platforms.android],
       androidBuilder: (context) => Icon(Icons.android),
       iOSBuilder: (context) => Icon(Icons.apple),
-    ),
-  }
-}
-```
-
-## Form Factors
-
-There are additional helpers for the following form factors:
-
-* desktop
-* mobile
-
-To enable the form factors, call [Platform.init](https://pub.dev/documentation/platform_builder/latest/platform/Platform/init.html) with the following options:
-
-```dart
-import 'package:platform_builder/platform_builder.dart';
-
-final navigatorKey = GlobalKey<NavigatorState>();
-
-Platform.init(
-  /// The breakpoint at which the width of the application should be considered
-  /// the desktop form factor.
-  desktopBreakpoint: 760,
-  /// A global navigator key used to access the current screen size.
-  navigatorKey: navigatorKey,
-);
-
-class MyApp extends StatelessWidget {
-  @override
-  build(context) {
-    return MaterialApp(
-      home: Home(),
-      /// Pass the same `navigatorKey` to the root of your app.
-      navigatorKey: navigatorKey,
-    );
-  }
-}
-```
-
-You can then make form factor checks throughout your application:
-
-```dart
-import 'package:platform_builder/platform_builder.dart';
-
-if (Platform.instance.isDesktop) {
-  print('desktop');
-} else if (Platform.instance.isMobile) {
-  print('mobile');
-}
-```
-
-The `PlatformBuilder` supports specifying separate platform implementations by form factor:
-
-```dart
-import 'package:platform_builder/platform_builder.dart';
-
-class MyWidget extends StatelessWidget {
-  @override
-  build(context) {
-    return PlatformBuilder(
-      mobile: FormFactorDelegate(
-        androidBuilder: (context) {...},
-        iOSBuilder: (context) {...},
-      ),
-      desktop: FormFactorDelegate(
-        builder: (context) {...},
-      ),
-    ),
-  }
-}
-```
-
-If all you need is a different builder for each form factor, there is a [FormFactorBuilder]() widget for building a separate mobile vs desktop implementation:
-
-```dart
-import 'package:platform_builder/platform_builder.dart';
-
-class MyWidget extends StatelessWidget {
-  @override
-  build(context) {
-    return FormFactorBuilder(
-      mobile: (context) {...},
-      desktop: (context) {...}
     ),
   }
 }
@@ -171,10 +86,8 @@ class MyWidget extends StatelessWidget {
   build(context) {
     return PlatformBuilder(
       builder: (context) {...},
-      webBuilder: (context) {...},
-      mobile: FormFactorDelegate(
-        webBuilder: (context) {...},
-      ),
+      nativeBuilder: (context) {...},
+      androidBuilder: (context) {...},
     ),
   }
 }
@@ -182,8 +95,8 @@ class MyWidget extends StatelessWidget {
 
 In this example on a web platform, all three builders are applicable, but the precedence would be:
 
-* mobile->webBuilder
-* webBuilder
+* androidBuilder
+* nativeBuilder
 * builder
 
 ## FAQs

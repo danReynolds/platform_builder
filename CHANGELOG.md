@@ -1,3 +1,7 @@
+## 2.0.0
+
+* Break out Form Factor implementation to a separate [Form Factor package.](https://pub.dev/packages/form_factor_builder)
+
 ## 1.0.1
 
 * Updated README and documentation

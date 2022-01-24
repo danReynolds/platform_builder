@@ -4,35 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:platform_builder/platform.dart';
 
 export 'package:platform_builder/platform.dart';
-export 'package:platform_builder/form_factor_builder.dart';
-
-/// Contains all platform builder functions that are available to a given
-/// form factor.
-class FormFactorDelegate {
-  final Widget Function(BuildContext context)? builder;
-  final Widget Function(BuildContext context)? nativeBuilder;
-  final Widget Function(BuildContext context)? webBuilder;
-  final Widget Function(BuildContext context)? androidBuilder;
-  final Widget Function(BuildContext context)? iOSBuilder;
-  final Widget Function(BuildContext context)? chromeExtensionBuilder;
-  final Widget Function(BuildContext context)? linuxBuilder;
-  final Widget Function(BuildContext context)? windowsBuilder;
-  final Widget Function(BuildContext context)? macOSBuilder;
-  final Widget Function(BuildContext context)? fuschiaBuilder;
-
-  FormFactorDelegate({
-    this.builder,
-    this.nativeBuilder,
-    this.webBuilder,
-    this.androidBuilder,
-    this.iOSBuilder,
-    this.chromeExtensionBuilder,
-    this.linuxBuilder,
-    this.macOSBuilder,
-    this.windowsBuilder,
-    this.fuschiaBuilder,
-  });
-}
 
 /// Builds a widget based on the most specific platform builder provided.
 /// Ex.
@@ -74,70 +45,48 @@ class PlatformBuilder extends StatelessWidget {
   /// Builder for the fuschia platform.
   final Widget Function(BuildContext context)? fuschiaBuilder;
 
-  /// Delegate for declaring platform builders for the mobile form factor.
-  final FormFactorDelegate? mobile;
-
-  /// Delegate for declaring platform builders for the desktop form factor.
-  final FormFactorDelegate? desktop;
-
   /// A list of supported platforms this widget should check are covered by the provided builders.
   /// Defaults to the supported platform list specified to [Platform].
   final List<Platforms>? supportedPlatforms;
 
-  FormFactorDelegate? get _formFactorDelegate {
-    if (!Platform.instance.isFormFactorEnabled) {
-      return null;
-    }
-
-    return Platform.instance.isDesktop ? desktop : mobile;
-  }
-
   Widget Function(BuildContext context)? get _androidBuilder {
-    return _formFactorDelegate?.androidBuilder ??
-        androidBuilder ??
-        _nativeBuilder;
+    return androidBuilder ?? _nativeBuilder;
   }
 
   Widget Function(BuildContext context)? get _iOSBuilder {
-    return _formFactorDelegate?.iOSBuilder ?? iOSBuilder ?? _nativeBuilder;
+    return iOSBuilder ?? _nativeBuilder;
   }
 
   Widget Function(BuildContext context)? get _chromeExtensionBuilder {
-    return _formFactorDelegate?.chromeExtensionBuilder ??
-        chromeExtensionBuilder ??
-        _webBuilder;
+    return chromeExtensionBuilder ?? _webBuilder;
   }
 
   Widget Function(BuildContext context)? get _macOSBuilder {
-    return _formFactorDelegate?.macOSBuilder ?? macOSBuilder ?? _nativeBuilder;
+    return macOSBuilder ?? _nativeBuilder;
   }
 
   Widget Function(BuildContext context)? get _linuxBuilder {
-    return _formFactorDelegate?.linuxBuilder ?? linuxBuilder ?? _nativeBuilder;
+    return linuxBuilder ?? _nativeBuilder;
   }
 
   Widget Function(BuildContext context)? get _fuschiaBuilder {
-    return _formFactorDelegate?.fuschiaBuilder ??
-        fuschiaBuilder ??
-        _nativeBuilder;
+    return fuschiaBuilder ?? _nativeBuilder;
   }
 
   Widget Function(BuildContext context)? get _windowsBuilder {
-    return _formFactorDelegate?.windowsBuilder ??
-        windowsBuilder ??
-        _nativeBuilder;
+    return windowsBuilder ?? _nativeBuilder;
   }
 
   Widget Function(BuildContext context)? get _nativeBuilder {
-    return _formFactorDelegate?.nativeBuilder ?? nativeBuilder ?? _builder;
+    return nativeBuilder ?? _builder;
   }
 
   Widget Function(BuildContext context)? get _webBuilder {
-    return _formFactorDelegate?.webBuilder ?? webBuilder ?? _builder;
+    return webBuilder ?? _builder;
   }
 
   Widget Function(BuildContext context)? get _builder {
-    return _formFactorDelegate?.builder ?? builder;
+    return builder;
   }
 
   const PlatformBuilder({
@@ -152,8 +101,6 @@ class PlatformBuilder extends StatelessWidget {
     this.linuxBuilder,
     this.macOSBuilder,
     this.fuschiaBuilder,
-    this.mobile,
-    this.desktop,
     key,
   }) : super(key: key);
 

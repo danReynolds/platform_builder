@@ -1,11 +1,9 @@
 import 'dart:io' as io;
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
 import 'js/base_js.dart';
 import 'js/js.dart';
 
 const _chromeExtensionScheme = 'chrome-extension';
-const defaultDesktopFormFactorBreakpoint = 760;
 
 enum Platforms {
   android,
@@ -31,51 +29,17 @@ class Platform {
   static Platform? _instance;
 
   Platform._({
-    this.desktopBreakpoint = defaultDesktopFormFactorBreakpoint,
-    this.navigatorKey,
     required this.supportedPlatforms,
   });
 
-  final int desktopBreakpoint;
-  final GlobalKey<NavigatorState>? navigatorKey;
   final List<Platforms> supportedPlatforms;
-  bool isTestOverride = false;
 
   static init({
-    int? desktopBreakpoint,
-    GlobalKey<NavigatorState>? navigatorKey,
     List<Platforms>? supportedPlatforms,
   }) {
     _instance = Platform._(
-      desktopBreakpoint:
-          desktopBreakpoint ?? defaultDesktopFormFactorBreakpoint,
-      navigatorKey: navigatorKey,
       supportedPlatforms: supportedPlatforms ?? Platforms.values,
     );
-  }
-
-  double get _screenWidth {
-    final _navigatorKey = navigatorKey;
-
-    if (!isFormFactorEnabled) {
-      throw 'Form factor checks not enabled. Provide a `navigatorKey` to `Platform.init`.';
-    }
-
-    final context = _navigatorKey!.currentContext;
-
-    if (context == null) {
-      throw 'No `BuildContext` for `navigatorKey`. Make sure to pass the `navigatorKey` to `MaterialApp`.';
-    }
-
-    return MediaQuery.of(context).size.width;
-  }
-
-  bool get isFormFactorEnabled {
-    if (isTestOverride) {
-      return true;
-    }
-
-    return navigatorKey != null;
   }
 
   // Platform checks
@@ -125,38 +89,10 @@ class Platform {
     return io.Platform.isWindows;
   }
 
-  // Form factor checks
-
-  /// Whether the current screen width determined by a [MediaQuery] check against
-  /// the [NavigatorState.currentContext] supplied as the [Platform.navigatorKey]
-  /// is greater than or equal to the [Platform.desktopBreakpoint].
-  bool get isDesktop {
-    if (isTestOverride) {
-      return true;
-    }
-
-    return _screenWidth >= desktopBreakpoint;
-  }
-
-  /// Whether the current screen width determined by a [MediaQuery] check against
-  /// the [NavigatorState.currentContext] supplied as the [Platform.navigatorKey].
-  /// is less than the [Platform.desktopBreakpoint].
-  bool get isMobile {
-    if (isTestOverride) {
-      return false;
-    }
-
-    return _screenWidth < desktopBreakpoint;
-  }
-
   // Current platform checks
 
   /// The current platform the Flutter application us running on.
   Platforms get current {
-    if (isTestOverride) {
-      return Platforms.android;
-    }
-
     if (isChromeExtension) {
       return Platforms.chromeExtension;
     }
