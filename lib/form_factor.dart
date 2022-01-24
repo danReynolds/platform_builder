@@ -16,19 +16,24 @@ class FormFactorBreakpoints {
 class FormFactor {
   FormFactor._();
 
-  final _subject = BehaviorSubject<FormFactors?>();
+  FormFactors? _prevFormFactor;
+
+  final _subject = BehaviorSubject<FormFactors?>.seeded(FormFactors.desktop);
   late FormFactorBreakpoints breakpoints;
+  late GlobalKey<NavigatorState> navigatorKey;
 
   static final instance = FormFactor._();
 
   static void init({
     required FormFactorBreakpoints breakpoints,
+    required GlobalKey<NavigatorState> navigatorKey,
   }) {
     instance.breakpoints = breakpoints;
+    instance.navigatorKey = navigatorKey;
   }
 
-  FormFactors? _formFactor(Size size) {
-    final width = size.width;
+  FormFactors get _formFactor {
+    final width = MediaQuery.of(navigatorKey.currentContext!).size.width;
 
     if (breakpoints.desktop != null && width >= breakpoints.desktop!) {
       return FormFactors.desktop;
@@ -38,27 +43,38 @@ class FormFactor {
     return FormFactors.mobile;
   }
 
-  void update(Size size) {
-    final updatedFormFactor = instance._formFactor(size);
-
+  void update() {
+    final updatedFormFactor = _formFactor;
     if (updatedFormFactor != instance._subject.valueOrNull) {
       _subject.add(updatedFormFactor);
     }
+  }
+
+  FormFactors? get value {
+    return _subject.valueOrNull;
   }
 
   Stream<FormFactors?> get stream {
     return _subject.stream;
   }
 
+  Stream<List<FormFactors?>> get changes {
+    return _subject.stream
+        .map((formFactor) => [formFactor, _prevFormFactor])
+        .doOnData((formFactor) {
+      _prevFormFactor = formFactor.first;
+    });
+  }
+
   bool get isMobile {
-    return _subject.value == FormFactors.mobile;
+    return _formFactor == FormFactors.mobile;
   }
 
   bool get isTablet {
-    return _subject.value == FormFactors.tablet;
+    return _formFactor == FormFactors.tablet;
   }
 
   bool get isDesktop {
-    return _subject.value == FormFactors.desktop;
+    return _formFactor == FormFactors.desktop;
   }
 }
