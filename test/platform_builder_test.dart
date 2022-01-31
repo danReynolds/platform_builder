@@ -22,7 +22,6 @@ void main() {
 
   Platform.init(
     supportedPlatforms: [Platforms.macOS],
-    override: null,
   );
 
   testGoldens(
