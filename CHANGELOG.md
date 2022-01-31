@@ -1,3 +1,7 @@
+## 2.1.0
+
+* Support overriding the current and host platform.
+
 ## 2.0.1
 
 * Add an example lib

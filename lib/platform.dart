@@ -28,25 +28,68 @@ class Platform {
 
   static Platform? _instance;
 
+  Platforms? override;
+  Platforms? overrideHost;
+
   Platform._({
     required this.supportedPlatforms,
+    this.override,
+    this.overrideHost,
   });
 
   final List<Platforms> supportedPlatforms;
 
   static init({
     List<Platforms>? supportedPlatforms,
+    Platforms? override,
+    Platforms? overrideHost,
   }) {
     _instance = Platform._(
       supportedPlatforms: supportedPlatforms ?? Platforms.values,
+      override: override,
+      overrideHost: overrideHost,
     );
   }
 
-  // Platform checks
+  // Internal platform checks
 
-  bool get isWeb {
+  bool get _isWeb {
     return kIsWeb;
   }
+
+  bool get _isAndroid {
+    // Check that it is not web first since the native Android and iOS
+    // checks throw errors on browser platforms
+    return !_isWeb && io.Platform.isAndroid;
+  }
+
+  bool get _isIOS {
+    // Check that it is not web first since the native Android and iOS
+    // checks throw errors on browser platforms
+    return !_isWeb && io.Platform.isIOS;
+  }
+
+  bool get _isChromeExtension {
+    return _isWeb && Uri.base.scheme == _chromeExtensionScheme;
+  }
+
+  bool get _isFuschia {
+    return io.Platform.isFuchsia;
+  }
+
+  bool get _isMacOS {
+    return io.Platform.isMacOS;
+  }
+
+  bool get _isLinux {
+    return io.Platform.isLinux;
+  }
+
+  bool get _isWindows {
+    return io.Platform.isWindows;
+  }
+
+  // Public platform checks
 
   /// Whether the application's platform is the same as the host platform.
   /// ex.1 If running Flutter web on macOS, the application's platform is web
@@ -57,68 +100,56 @@ class Platform {
     return current == currentHost;
   }
 
-  bool get isAndroid {
-    // Check that it is not web first since the native Android and iOS
-    // checks throw errors on browser platforms
-    return !isWeb && io.Platform.isAndroid;
-  }
+  bool get isWeb =>
+      current == Platforms.web || current == Platforms.chromeExtension;
 
-  bool get isIOS {
-    // Check that it is not web first since the native Android and iOS
-    // checks throw errors on browser platforms
-    return !isWeb && io.Platform.isIOS;
-  }
-
-  bool get isChromeExtension {
-    return isWeb && Uri.base.scheme == _chromeExtensionScheme;
-  }
-
-  bool get isFuschia {
-    return io.Platform.isFuchsia;
-  }
-
-  bool get isMacOS {
-    return io.Platform.isMacOS;
-  }
-
-  bool get isLinux {
-    return io.Platform.isLinux;
-  }
-
-  bool get isWindows {
-    return io.Platform.isWindows;
-  }
+  bool get isAndroid => current == Platforms.android;
+  bool get isIOS => current == Platforms.iOS;
+  bool get isChromeExtension => current == Platforms.chromeExtension;
+  bool get isFuschia => current == Platforms.fuschia;
+  bool get isMacOS => current == Platforms.macOS;
+  bool get isLinux => current == Platforms.linux;
+  bool get isWindows => current == Platforms.windows;
 
   // Current platform checks
 
   /// The current platform the Flutter application us running on.
   Platforms get current {
-    if (isChromeExtension) {
+    // Return the override for the current platform if present.
+    if (override != null) {
+      return override!;
+    }
+
+    if (_isChromeExtension) {
       return Platforms.chromeExtension;
     }
 
-    if (isWeb) {
+    if (_isWeb) {
       return Platforms.web;
     }
 
-    if (isAndroid) {
+    if (_isAndroid) {
       return Platforms.android;
     }
 
-    if (isIOS) {
+    if (_isIOS) {
       return Platforms.iOS;
     }
 
-    if (isMacOS) {
+    if (_isMacOS) {
       return Platforms.macOS;
     }
 
-    if (isLinux) {
+    if (_isLinux) {
       return Platforms.linux;
     }
 
-    if (isFuschia) {
+    if (_isFuschia) {
       return Platforms.fuschia;
+    }
+
+    if (_isWindows) {
+      return Platforms.windows;
     }
 
     throw 'unsupported platform';
@@ -127,6 +158,10 @@ class Platform {
   /// The application's host operating system. In the example of running Flutter web
   /// on an iPhone, the host would be iOS.
   Platforms get currentHost {
+    if (overrideHost != null) {
+      return overrideHost!;
+    }
+
     switch (defaultTargetPlatform) {
       case TargetPlatform.android:
         return Platforms.android;
