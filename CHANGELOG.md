@@ -1,3 +1,7 @@
+## 2.1.1
+
+* Remove unused dependency.
+
 ## 2.1.0
 
 * Support overriding the current and host platform.

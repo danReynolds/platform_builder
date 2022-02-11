@@ -1,6 +1,6 @@
 name: platform_builder
 description: A Flutter library for performing platform checks and building widgets based on platform.
-version: 2.1.0
+version: 2.1.1
 homepage: https://github.com/danReynolds/platform_builder
 
 environment:
@@ -10,7 +10,6 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  rxdart: ^0.27.3
 
 dev_dependencies:
   flutter_test:
