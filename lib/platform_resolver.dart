@@ -1,7 +1,8 @@
 import 'package:platform_builder/platform_builder.dart';
 
-// A variable that holds distinct values for different platforms by precedence.
-class PlatformVariable<T> {
+// A class that determines the value to resolve given the provided resolvers
+// and platform precedence.
+class PlatformResolver<T> {
   final T? Function()? nativeResolver;
   final T? Function()? androidResolver;
   final T? Function()? iOSResolver;
@@ -13,7 +14,7 @@ class PlatformVariable<T> {
   final T? Function()? windowsResolver;
   final T? Function()? defaultResolver;
 
-  PlatformVariable({
+  PlatformResolver({
     this.nativeResolver,
     this.androidResolver,
     this.iOSResolver,

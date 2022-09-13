@@ -1,3 +1,7 @@
+## 2.2.1
+
+Bugfix class name.
+
 ## 2.2.0
 
 Refactor code to use and expose the `PlatformResolver` API.

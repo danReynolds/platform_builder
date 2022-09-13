@@ -71,7 +71,7 @@ class PlatformBuilder extends StatelessWidget {
     final _supportedPlatforms =
         supportedPlatforms ?? Platform.instance.supportedPlatforms;
 
-    final resolver = PlatformVariable<Widget Function(BuildContext context)>(
+    final resolver = PlatformResolver<Widget Function(BuildContext context)>(
       androidResolver: () => androidBuilder,
       iOSResolver: () => iOSBuilder,
       fuschiaResolver: () => fuschiaBuilder,
