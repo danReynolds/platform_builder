@@ -1,3 +1,7 @@
+## 2.2.0
+
+Refactor code to use and expose the `PlatformResolver` API.
+
 ## 2.1.1
 
 * Remove unused dependency.

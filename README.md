@@ -99,6 +99,25 @@ In this example on a web platform, all three builders are applicable, but the pr
 * nativeBuilder
 * builder
 
+## Platform Resolvers
+
+If you're looking to resolve a non-widget value by Platform, the `PlaformResolver` API can be used to resolve the desired platform value. Consider this example
+// where we are resolving a value on Android:
+
+```dart
+import 'package:platform_builder/platform_builder.dart';
+
+const platformResolver = PlatformResolver<String>(
+  defaultResolver: () => "Unknown",
+  androidResolver: () => "Android",
+  nativeResolver: () => "Native",
+);
+
+print(platformResolver.resolve()) // Android
+print(platformResolver.resolve(Platforms.iOS)) // Native
+print(platformResolver.resolve(Platforms.web)) // Unknown
+```
+
 ## FAQs
 
 * **Q**: Don't we already have a way to check the current Platform?
