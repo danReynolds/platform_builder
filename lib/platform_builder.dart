@@ -71,7 +71,7 @@ class PlatformBuilder extends StatelessWidget {
     final _supportedPlatforms =
         supportedPlatforms ?? Platform.instance.supportedPlatforms;
 
-    final resolver = PlatformResolver<Widget Function(BuildContext context)>(
+    final resolver = PlatformResolver<Widget Function(BuildContext context)?>(
       androidResolver: () => androidBuilder,
       iOSResolver: () => iOSBuilder,
       fuschiaResolver: () => fuschiaBuilder,
@@ -118,6 +118,6 @@ class PlatformBuilder extends StatelessWidget {
       'Missing chrome extension platform builder',
     );
 
-    return resolver.resolve()!(context);
+    return resolver.current!(context);
   }
 }

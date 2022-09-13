@@ -113,7 +113,7 @@ const platformResolver = PlatformResolver<String>(
   nativeResolver: () => "Native",
 );
 
-print(platformResolver.resolve()) // Android
+print(platformResolver.current) // Android
 print(platformResolver.resolve(Platforms.iOS)) // Native
 print(platformResolver.resolve(Platforms.web)) // Unknown
 ```

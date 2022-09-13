@@ -3,16 +3,16 @@ import 'package:platform_builder/platform_builder.dart';
 // A class that determines the value to resolve given the provided resolvers
 // and platform precedence.
 class PlatformResolver<T> {
-  final T? Function()? nativeResolver;
-  final T? Function()? androidResolver;
-  final T? Function()? iOSResolver;
-  final T? Function()? chromeExtensionResolver;
-  final T? Function()? fuschiaResolver;
-  final T? Function()? linuxResolver;
-  final T? Function()? macOSResolver;
-  final T? Function()? webResolver;
-  final T? Function()? windowsResolver;
-  final T? Function()? defaultResolver;
+  final T Function()? nativeResolver;
+  final T Function()? androidResolver;
+  final T Function()? iOSResolver;
+  final T Function()? chromeExtensionResolver;
+  final T Function()? fuschiaResolver;
+  final T Function()? linuxResolver;
+  final T Function()? macOSResolver;
+  final T Function()? webResolver;
+  final T Function()? windowsResolver;
+  final T Function()? defaultResolver;
 
   PlatformResolver({
     this.nativeResolver,
@@ -27,9 +27,13 @@ class PlatformResolver<T> {
     this.defaultResolver,
   });
 
+  T get current {
+    return resolve(Platform.instance.current);
+  }
+
   /// Resolves the value for the given platform by precedence, defaulting to the current platform.
-  T? resolve([Platforms? platform]) {
-    switch (platform ?? Platform.instance.current) {
+  T resolve(Platforms platform) {
+    switch (platform) {
       case Platforms.android:
         return android;
       case Platforms.iOS:
@@ -49,39 +53,43 @@ class PlatformResolver<T> {
     }
   }
 
-  T? get android {
+  T get android {
     return androidResolver?.call() ?? native;
   }
 
-  T? get iOS {
+  T get iOS {
     return iOSResolver?.call() ?? native;
   }
 
-  T? get windows {
+  T get windows {
     return windowsResolver?.call() ?? native;
   }
 
-  T? get fuschia {
+  T get fuschia {
     return fuschiaResolver?.call() ?? native;
   }
 
-  T? get macOS {
+  T get macOS {
     return macOSResolver?.call() ?? native;
   }
 
-  T? get chromeExtension {
+  T get chromeExtension {
     return chromeExtensionResolver?.call() ?? web;
   }
 
-  T? get linux {
+  T get linux {
     return linuxResolver?.call() ?? native;
   }
 
-  T? get web {
-    return webResolver?.call() ?? defaultResolver?.call();
+  T get web {
+    final resolver = webResolver?.call() ?? defaultResolver?.call();
+    assert(resolver != null, 'Missing web resolver');
+    return resolver!;
   }
 
-  T? get native {
-    return nativeResolver?.call() ?? defaultResolver?.call();
+  T get native {
+    final resolver = nativeResolver?.call() ?? defaultResolver?.call();
+    assert(resolver != null, 'Missing native resolver');
+    return resolver!;
   }
 }
