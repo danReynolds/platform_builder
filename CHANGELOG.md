@@ -1,3 +1,7 @@
+## 2.4.0
+
+More factors to the resolve API.
+
 ## 2.3.0
 
 Refactor `PlatformResolver` API.

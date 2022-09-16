@@ -118,6 +118,6 @@ class PlatformBuilder extends StatelessWidget {
       'Missing chrome extension platform builder',
     );
 
-    return resolver.current!(context);
+    return resolver.resolve()!(context);
   }
 }

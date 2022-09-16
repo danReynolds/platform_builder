@@ -27,13 +27,35 @@ class PlatformResolver<T> {
     this.defaultResolver,
   });
 
-  T get current {
-    return resolve(Platform.instance.current);
+  static T current<T>({
+    T Function()? nativeResolver,
+    T Function()? androidResolver,
+    T Function()? iOSResolver,
+    T Function()? chromeExtensionResolver,
+    T Function()? fuschiaResolver,
+    T Function()? linuxResolver,
+    T Function()? macOSResolver,
+    T Function()? webResolver,
+    T Function()? windowsResolver,
+    T Function()? defaultResolver,
+  }) {
+    return PlatformResolver(
+      nativeResolver: nativeResolver,
+      androidResolver: androidResolver,
+      iOSResolver: iOSResolver,
+      chromeExtensionResolver: chromeExtensionResolver,
+      fuschiaResolver: fuschiaResolver,
+      linuxResolver: linuxResolver,
+      macOSResolver: macOSResolver,
+      webResolver: webResolver,
+      windowsResolver: windowsResolver,
+      defaultResolver: defaultResolver,
+    ).resolve();
   }
 
   /// Resolves the value for the given platform by precedence, defaulting to the current platform.
-  T resolve(Platforms platform) {
-    switch (platform) {
+  T resolve([Platforms? platform]) {
+    switch (platform ?? Platform.instance.current) {
       case Platforms.android:
         return android;
       case Platforms.iOS:
