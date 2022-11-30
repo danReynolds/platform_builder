@@ -49,11 +49,11 @@ By default all platforms are enabled and the `PlatformBuilder` will throw an err
 import 'package:platform_builder/platform_builder.dart';
 
 Platform.init(
-  supportedPlatforms: [
+  supportedPlatforms: {
     Platforms.iOS,
     Platforms.android,
     Platforms.web,
-  ]
+  }
 );
 ```
 
@@ -66,7 +66,7 @@ class MyWidget extends StatelessWidget {
   @override
   build(context) {
     return PlatformBuilder(
-      supportedPlatforms: [Platforms.iOS, Platforms.android],
+      supportedPlatforms: {Platforms.iOS, Platforms.android},
       androidBuilder: (context) => Icon(Icons.android),
       iOSBuilder: (context) => Icon(Icons.apple),
     ),

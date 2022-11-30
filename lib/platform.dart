@@ -21,7 +21,7 @@ enum Platforms {
 class Platform {
   static Platform get instance {
     _instance ??= Platform._(
-      supportedPlatforms: Platforms.values,
+      supportedPlatforms: Platforms.values.toSet(),
     );
     return _instance!;
   }
@@ -37,15 +37,15 @@ class Platform {
     this.overrideHost,
   });
 
-  final List<Platforms> supportedPlatforms;
+  final Set<Platforms> supportedPlatforms;
 
   static init({
-    List<Platforms>? supportedPlatforms,
+    Set<Platforms>? supportedPlatforms,
     Platforms? override,
     Platforms? overrideHost,
   }) {
     _instance = Platform._(
-      supportedPlatforms: supportedPlatforms ?? Platforms.values,
+      supportedPlatforms: supportedPlatforms ?? Platforms.values.toSet(),
       override: override,
       overrideHost: overrideHost,
     );

@@ -7,6 +7,8 @@ import 'package:platform_builder/platform_resolver.dart';
 export 'package:platform_builder/platform.dart';
 export 'package:platform_builder/platform_resolver.dart';
 
+typedef _Builder = Widget Function(BuildContext context);
+
 /// Builds a widget based on the most specific platform builder provided.
 /// Ex.
 /// If running on Android with [PlatformBuilder.androidBuilder], [PlatformBuilder.builder],
@@ -66,58 +68,28 @@ class PlatformBuilder extends StatelessWidget {
     key,
   }) : super(key: key);
 
+  _Builder Function()? _builderToResolver(_Builder? builder) {
+    if (builder != null) {
+      return () => builder;
+    }
+    return null;
+  }
+
   @override
   build(context) {
-    final _supportedPlatforms =
-        supportedPlatforms ?? Platform.instance.supportedPlatforms;
-
-    final resolver = PlatformResolver<Widget Function(BuildContext context)?>(
-      androidResolver: () => androidBuilder,
-      iOSResolver: () => iOSBuilder,
-      fuschiaResolver: () => fuschiaBuilder,
-      windowsResolver: () => windowsBuilder,
-      chromeExtensionResolver: () => chromeExtensionBuilder,
-      linuxResolver: () => linuxBuilder,
-      macOSResolver: () => macOSBuilder,
-      webResolver: () => webBuilder,
-      nativeResolver: () => nativeBuilder,
-      defaultResolver: () => builder,
+    final resolver = PlatformResolver<_Builder>(
+      androidResolver: _builderToResolver(androidBuilder),
+      iOSResolver: _builderToResolver(iOSBuilder),
+      fuschiaResolver: _builderToResolver(fuschiaBuilder),
+      windowsResolver: _builderToResolver(windowsBuilder),
+      chromeExtensionResolver: _builderToResolver(chromeExtensionBuilder),
+      linuxResolver: _builderToResolver(linuxBuilder),
+      macOSResolver: _builderToResolver(macOSBuilder),
+      webResolver: _builderToResolver(webBuilder),
+      nativeResolver: _builderToResolver(nativeBuilder),
+      defaultResolver: _builderToResolver(builder),
     );
 
-    // Check that the implementation does not omit any supported platforms
-    assert(
-      !_supportedPlatforms.contains(Platforms.android) ||
-          resolver.android != null,
-      'Missing android platform builder',
-    );
-    assert(
-      !_supportedPlatforms.contains(Platforms.iOS) || resolver.iOS != null,
-      'Missing iOS platform builder',
-    );
-    assert(
-      !_supportedPlatforms.contains(Platforms.linux) || resolver.linux != null,
-      'Missing linux platform builder',
-    );
-    assert(
-      !_supportedPlatforms.contains(Platforms.fuschia) ||
-          resolver.fuschia != null,
-      'Missing fuschia platform builder',
-    );
-    assert(
-      !_supportedPlatforms.contains(Platforms.macOS) || resolver.macOS != null,
-      'Missing macOS platform builder',
-    );
-    assert(
-      !_supportedPlatforms.contains(Platforms.windows) ||
-          resolver.windows != null,
-      'Missing windows platform builder',
-    );
-    assert(
-      !_supportedPlatforms.contains(Platforms.chromeExtension) ||
-          resolver.chromeExtension != null,
-      'Missing chrome extension platform builder',
-    );
-
-    return resolver.resolve()!(context);
+    return resolver.resolve()(context);
   }
 }

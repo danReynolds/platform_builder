@@ -21,7 +21,7 @@ void main() {
   ErrorWidget.builder = (FlutterErrorDetails details) => Container();
 
   Platform.init(
-    supportedPlatforms: [Platforms.macOS],
+    supportedPlatforms: {Platforms.macOS},
   );
 
   testGoldens(
@@ -69,7 +69,7 @@ void main() {
     'Assertion thrown with missing builders',
     (WidgetTester tester) async {
       Platform.init(
-        supportedPlatforms: [Platforms.macOS, Platforms.iOS],
+        supportedPlatforms: {Platforms.macOS, Platforms.iOS},
       );
 
       await tester.pumpWidget(PlatformBuilder(

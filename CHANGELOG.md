@@ -1,3 +1,12 @@
+## 3.0.0
+
+* Refactor internal implementation.
+* [BREAKING] Change supported platforms from list->set.
+
+## 2.4.1
+
+Fix bug with resolver assertion.
+
 ## 2.4.0
 
 More factors to the resolve API.

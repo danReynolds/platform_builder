@@ -25,7 +25,35 @@ class PlatformResolver<T> {
     this.webResolver,
     this.windowsResolver,
     this.defaultResolver,
-  });
+    Set<Platforms>? supportedPlatforms,
+  }) {
+    supportedPlatforms ??= Platform.instance.supportedPlatforms;
+
+    if (supportedPlatforms.contains(Platforms.android)) {
+      assert(_android != null, 'Missing android resolver');
+    }
+    if (supportedPlatforms.contains(Platforms.chromeExtension)) {
+      assert(_chromeExtension != null, 'Missing chrome extension resolver');
+    }
+    if (supportedPlatforms.contains(Platforms.fuschia)) {
+      assert(_fuschia != null, 'Missing fuschia resolver');
+    }
+    if (supportedPlatforms.contains(Platforms.iOS)) {
+      assert(_iOS != null, 'Missing iOS resolver');
+    }
+    if (supportedPlatforms.contains(Platforms.linux)) {
+      assert(_linux != null, 'Missing linux resolver');
+    }
+    if (supportedPlatforms.contains(Platforms.macOS)) {
+      assert(_macOS != null, 'Missing macOS resolver');
+    }
+    if (supportedPlatforms.contains(Platforms.web)) {
+      assert(_web != null, 'Missing web resolver');
+    }
+    if (supportedPlatforms.contains(Platforms.windows)) {
+      assert(_windows != null, 'Missing windows resolver');
+    }
+  }
 
   static T current<T>({
     T Function()? nativeResolver,
@@ -75,43 +103,75 @@ class PlatformResolver<T> {
     }
   }
 
+  T Function()? get _android {
+    return androidResolver ?? _native;
+  }
+
   T get android {
-    return androidResolver?.call() ?? native;
+    return _android!();
+  }
+
+  T Function()? get _iOS {
+    return iOSResolver ?? _native;
   }
 
   T get iOS {
-    return iOSResolver?.call() ?? native;
+    return _iOS!();
+  }
+
+  T Function()? get _windows {
+    return windowsResolver ?? _native;
   }
 
   T get windows {
-    return windowsResolver?.call() ?? native;
+    return _windows!();
+  }
+
+  T Function()? get _fuschia {
+    return fuschiaResolver ?? _native;
   }
 
   T get fuschia {
-    return fuschiaResolver?.call() ?? native;
+    return _fuschia!();
+  }
+
+  T Function()? get _macOS {
+    return macOSResolver ?? _native;
   }
 
   T get macOS {
-    return macOSResolver?.call() ?? native;
+    return _macOS!();
+  }
+
+  T Function()? get _chromeExtension {
+    return chromeExtensionResolver ?? _web;
   }
 
   T get chromeExtension {
-    return chromeExtensionResolver?.call() ?? web;
+    return _chromeExtension!();
+  }
+
+  T Function()? get _linux {
+    return linuxResolver ?? _native;
   }
 
   T get linux {
-    return linuxResolver?.call() ?? native;
+    return _linux!();
   }
 
   T get web {
-    final resolver = webResolver?.call() ?? defaultResolver?.call();
-    assert(resolver != null, 'Missing web resolver');
-    return resolver!;
+    return _web!();
+  }
+
+  T Function()? get _web {
+    return webResolver ?? defaultResolver;
+  }
+
+  T Function()? get _native {
+    return nativeResolver ?? defaultResolver;
   }
 
   T get native {
-    final resolver = nativeResolver?.call() ?? defaultResolver?.call();
-    assert(resolver != null, 'Missing native resolver');
-    return resolver!;
+    return _native!();
   }
 }

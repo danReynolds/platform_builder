@@ -17,11 +17,11 @@ class _MyAppState extends State<MyApp> {
   initState() {
     super.initState();
 
-    Platform.init(supportedPlatforms: [
+    Platform.init(supportedPlatforms: {
       Platforms.web,
       Platforms.android,
       Platforms.iOS,
-    ]);
+    });
   }
 
   @override
